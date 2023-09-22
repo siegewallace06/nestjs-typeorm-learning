@@ -1,3 +1,3 @@
 export class CreateListingDto {
-    description: string;
+  description: string;
 }

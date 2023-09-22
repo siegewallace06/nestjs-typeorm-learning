@@ -1,23 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Listing } from './listing.entity';
-
+import { AbstractEntity } from '../../database/abstract.entity';
+import { Comment } from './comment.entity';
+import { Tag } from './tag.entity';
 
 @Entity()
-export class Item {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Item extends AbstractEntity<Item> {
+  @Column()
+  name: string;
 
-    @Column()
-    name: string;
+  @Column({ default: true })
+  public: boolean;
 
-    @Column({ default: true })
-    public: boolean;
+  @OneToOne(() => Listing, { cascade: true })
+  @JoinColumn()
+  listing: Listing;
 
-    @OneToOne(() => Listing)
-    @JoinColumn()
-    listing: Listing;
+  @OneToMany(() => Comment, (comment) => comment.item, { cascade: true })
+  comments: Comment[];
 
-    constructor(item: Partial<Item>) {
-        Object.assign(this, item);
-    }
+  @ManyToMany(() => Tag, { cascade: true })
+  @JoinTable()
+  tags: Tag[];
 }
